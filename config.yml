@@ -1,0 +1,10 @@
+logging:
+  level: INFO
+  loggers:
+    io.mattnelson: DEBUG
+    org.eclipse.jetty.servlet: DEBUG
+contextPath: false
+servletMapping: false
+contextHandler: false
+handlerWrapper: false
+redirect: false
