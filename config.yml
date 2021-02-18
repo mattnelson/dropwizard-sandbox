@@ -7,4 +7,6 @@ contextPath: false
 servletMapping: false
 contextHandler: false
 handlerWrapper: false
-redirect: false
+redirectServlet: false
+redirectFilter: false
+rewrite: false

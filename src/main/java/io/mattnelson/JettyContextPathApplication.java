@@ -6,12 +6,16 @@ import io.dropwizard.setup.Environment;
 import io.mattnelson.resources.LinkFilter;
 import io.mattnelson.resources.LinkResource;
 import io.mattnelson.resources.RedirectFilter;
+import io.mattnelson.resources.RedirectServlet;
+import org.eclipse.jetty.rewrite.handler.RewriteHandler;
+import org.eclipse.jetty.rewrite.handler.RewriteRegexRule;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.HandlerWrapper;
 import org.eclipse.jetty.servlet.FilterMapping;
 import org.eclipse.jetty.servlet.ServletMapping;
+import org.glassfish.jersey.servlet.ServletContainer;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.ServletException;
@@ -64,10 +68,18 @@ public class JettyContextPathApplication extends Application<JettyContextPathCon
         } else if (configuration.handlerWrapper) {
             System.out.println("Running in handler wrapper mode");
             environment.getApplicationContext().insertHandler(new ContextServletHandler());
-        } else if (configuration.redirect) {
-            System.out.println("Running in redirect mode");
+        } else if (configuration.redirectFilter) {
+            System.out.println("Running in redirect filter mode");
             environment.servlets().addFilter("redirect", RedirectFilter.class)
                     .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD), false, "/*");
+        } else if (configuration.redirectServlet) {
+            System.out.println("Running in redirect servlet mode");
+            environment.servlets().addServlet("redirect", new RedirectServlet((ServletContainer) environment.getJerseyServletContainer()))
+                    .addMapping("/alias/*");
+        } else if (configuration.rewrite) {
+            RewriteHandler rewriteHandler = new RewriteHandler();
+            rewriteHandler.addRule(new RewriteRegexRule("/alias/link", "/link"));
+            environment.getApplicationContext().insertHandler(rewriteHandler);
         }
 
         environment.servlets().addFilter("link", LinkFilter.class)

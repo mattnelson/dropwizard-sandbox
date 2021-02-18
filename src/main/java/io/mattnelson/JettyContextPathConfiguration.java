@@ -18,5 +18,11 @@ public class JettyContextPathConfiguration extends Configuration {
     boolean handlerWrapper = false;
 
     @JsonProperty
-    boolean redirect = false;
+    boolean redirectFilter = false;
+
+    @JsonProperty
+    boolean redirectServlet = false;
+
+    @JsonProperty
+    boolean rewrite = false;
 }
